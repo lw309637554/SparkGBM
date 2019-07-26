@@ -18,12 +18,15 @@ object GBMExample {
       .builder
       .appName("GBMExample")
       .getOrCreate
-
+    val dataPath = {
+      //eg: hdfs:///data/housing_scale
+      if (args.length > 0) args(0) else "data/housing_scale"
+    }
     spark.sparkContext.setLogLevel("INFO")
     spark.sparkContext.getConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
 
     val rdd = spark.read.format("libsvm")
-      .load("data/housing_scale")
+      .load(dataPath)
       .select("label", "features")
       .rdd.map { row =>
       (1.0, Array(row.getDouble(0)), row.getAs[Vector](1))
